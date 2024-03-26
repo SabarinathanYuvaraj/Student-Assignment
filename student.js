@@ -287,7 +287,7 @@ function viewTopPerformers() {
 
 
     for (let cls in topPerformers) {
-        topPerformers[cls].sort((a, b) => b.totalMarks - a.totalMarks);
+        topPerformers[cls].sort((a, b) => b.percentage - a.percentage);
         topPerformers[cls] = topPerformers[cls].slice(0, 3); 
     }
 
