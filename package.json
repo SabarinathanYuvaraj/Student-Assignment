@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  },
+  "scripts": {
+    "start": "node student.js"
+  }
+  
+}
