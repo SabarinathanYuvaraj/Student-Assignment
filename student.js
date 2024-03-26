@@ -285,26 +285,23 @@ function viewTopPerformers() {
         topPerformers[student.Class].push(student);
     });
 
-
     for (let cls in topPerformers) {
-        topPerformers[cls].sort((a, b) => b.totalMarks - a.totalMarks);
-        topPerformers[cls] = topPerformers[cls].slice(0, 3); 
+        topPerformers[cls].sort((a, b) => b.percentage - a.percentage);
+                topPerformers[cls] = topPerformers[cls].slice(0, 3); 
     }
-
-
     console.log("+--------+---------------------+-----------+");
     console.log("| Class  |  Student Name       |  Percentage");
     console.log("+--------+---------------------+-----------+");
-
-
+    
     for (let cls in topPerformers) {
         topPerformers[cls].forEach(student => {
             const ClassNo = cls.toString().padStart(6);
-            const studentName = student.Name.padEnd(15);
-            const studentPercentage = student.percentage.toString().padStart(7)
-            console.log(`| ${ClassNo} | ${studentName} | ${studentPercentage}       |`);
+            const studentName = student.Name.padEnd(20); 
+            const studentPercentage = student.percentage.toFixed(2).toString().padStart(11); 
+            console.log(`| ${ClassNo} | ${studentName} | ${studentPercentage}% |`);
         });
         console.log("--------------------------------------------");
     }
     console.log("+--------+---------------------+-----------+");
+    
 }
