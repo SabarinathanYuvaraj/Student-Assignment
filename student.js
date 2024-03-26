@@ -3,7 +3,7 @@ import studentList from './studentData.js';
 let condition = true
 while(condition){
 
-    const userInput = readline.question("Enter the number \n 1) TakeTest \n 2) GenerateResult \n 3) StudentResult \n 4) ClassBasedResult \n 5) Exit \n \n ");
+    const userInput = readline.question("Enter the number \n 1) TakeTest \n 2) GenerateResult \n 3) StudentResult \n 4) ClassBasedResult \n 5) DetailAnalysisResult \n 6) Exit \n  \n");
 
     if(userInput == 1){
         takeTest()
@@ -22,6 +22,10 @@ while(condition){
     }
 
     if(userInput == 5){
+        DetailAnalysisResult()
+    }
+
+    if(userInput == 6){
         condition = false
         console.log("Thank you Visit again");
     }
@@ -57,26 +61,26 @@ function takeTest(){
 
 
 
-        function generateResult() {
-            studentList.forEach(student => {
-                let totalScore = 0;
-                let totalSubjects = student.test_score.length;
-        
-                for (let i = 0; i < student.test_score.length; i++) {
-                    totalScore += student.test_score[i].marks;
-                }
-        
-                if (totalSubjects !== 0) {
-                    let percentage = ((totalScore / totalSubjects).toFixed(2)); 
-                    student.totalScore = totalScore;
-                    student.percentage = percentage;
-                } else {
-                    student.totalScore = 0;
-                    student.percentage = 0;
-                }
-            });
+function generateResult() {
+    studentList.forEach(student => {
+        let totalScore = 0;
+        let totalSubjects = student.test_score.length;
+
+        for (let i = 0; i < student.test_score.length; i++) {
+            totalScore += student.test_score[i].marks;
         }
-        
+
+        if (totalSubjects !== 0) {
+            let percentage = parseFloat(((totalScore / totalSubjects).toFixed(2))) 
+            student.totalScore = totalScore;
+            student.percentage = percentage;
+        } else {
+            student.totalScore = 0;
+            student.percentage = 0;
+        }
+    });
+}
+
 
 
 function studentResult()
@@ -88,7 +92,7 @@ console.log("+--------+---------------------+")
         if(student.totalScore != 0 && student.percentage != 0)
         {
             const totalScore = student.totalScore.toString().padStart(6);
-            const percentage = student.percentage.toString().padStart(6);
+            const percentage = student.percentage.toString().padEnd(5);
             console.log(`| ${totalScore}      | ${percentage}         |`);
             console.log("+--------+---------------------+")
 
@@ -131,8 +135,60 @@ function viewClassResult(){
     }
 }
 
-        
 
+function DetailAnalysisResult() {
+    let overAllResult = {};
+    studentList.forEach(student => {
+        if (!overAllResult[student.Class]) {
+            overAllResult[student.Class] = [];
+        }
+        overAllResult[student.Class].push(student);
+    });
 
+    Object.keys(overAllResult).forEach(cls => {
+        let totalMarks = 0;
+        let totalPercentage = 0;
+        let failedStudentCount = 0;
+        let passedStudentCount = 0;
+        let failedStudentMarks = 0;
+        let passedStudentMarks = 0;
+
+        overAllResult[cls].forEach(student => {
+            totalMarks += student.totalScore;
+            totalPercentage += student.percentage;
+            if (student.percentage < 35) {
+                failedStudentCount++;
+                failedStudentMarks += student.totalScore;
+            } else {
+                passedStudentCount++;
+                passedStudentMarks += student.totalScore;
+            }
+        });
+
+        let studentCount = overAllResult[cls].length;
+        console.log(studentCount);
+        let averageTotalMark = (totalMarks / studentCount).toFixed(2);
+        let averageTotalPercentage = (totalPercentage / studentCount).toFixed(2);
+        let failedStudentPercentage = failedStudentCount > 0 ? ((failedStudentCount/studentCount)*100 ).toFixed(2) : "0.00";
+        let passedStudentPercentage = passedStudentCount > 0 ? (( passedStudentCount/studentCount)*100 ).toFixed(2) : "0.00";
+        let overallGradeClass = '';
+
+        if (averageTotalPercentage > 80) {
+            overallGradeClass = 'A';
+        } else if (averageTotalPercentage > 60) {
+            overallGradeClass = 'B';
+        } else if (averageTotalPercentage >= 35) {
+            overallGradeClass = 'C';
+        } else {
+            overallGradeClass = 'D';
+        }
+
+        console.log("+-----------+-------+-------+-------+--------------+-------------------+-------------+------------------+");
+        console.log("| Avg Mark  | Avg % | Class | Grade | Failed Count | Failed Percentage | Passed Count | Passed Percentage |");
+        console.log("+-----------+-------+-------+-------+--------------+-------------------+-------------+------------------+");
+        console.log(`| ${averageTotalMark.padStart(9)} | ${averageTotalPercentage.padStart(5)} | ${cls.padStart(5)} | ${overallGradeClass.padStart(5)} | ${failedStudentCount.toString().padStart(12)} | ${failedStudentPercentage.padStart(17)}% | ${passedStudentCount.toString().padStart(11)} | ${passedStudentPercentage.padStart(16)}% |`);
+        console.log("+-----------+-------+-------+-------+--------------+-------------------+-------------+------------------+");
+    });
+}
 
 
