@@ -3,7 +3,7 @@ import studentList from './studentData.js';
 let condition = true
 while(condition){
 
-    const userInput = readline.question("Enter the number \n 1) TakeTest \n 2) GenerateResult \n 3) StudentResult \n 4) ClassBasedResult \n 5) DetailAnalysisResult \n 6) Exit \n  \n");
+    const userInput = readline.question("Enter the number \n 1) TakeTest \n 2) GenerateResult \n 3) StudentResult \n 4) ClassBasedResult \n 5) DetailAnalysisResult \n 6) topThreePerformer \n 7) Exit \n  \n");
 
     if(userInput == 1){
         takeTest()
@@ -26,6 +26,10 @@ while(condition){
     }
 
     if(userInput == 6){
+        viewTopPerformers()
+    }
+
+    if(userInput == 7){
         condition = false
         console.log("Thank you Visit again");
     }
@@ -191,4 +195,35 @@ function DetailAnalysisResult() {
     });
 }
 
+function viewTopPerformers() {
+    let topPerformers = {};
+    
+    studentList.forEach(student => {
+        if (!topPerformers[student.Class]) {
+            topPerformers[student.Class] = [];
+        }
+        topPerformers[student.Class].push(student);
+    });
 
+
+    for (let cls in topPerformers) {
+        topPerformers[cls].sort((a, b) => b.totalMarks - a.totalMarks);
+        topPerformers[cls] = topPerformers[cls].slice(0, 3); 
+    }
+
+
+    console.log("+--------+---------------------+");
+    console.log("| Class  |  Student Name       |");
+    console.log("+--------+---------------------+");
+
+
+    for (let cls in topPerformers) {
+        topPerformers[cls].forEach(student => {
+            const ClassNo = cls.toString().padStart(6);
+            const studentName = student.Name.padEnd(20);
+            console.log(`| ${ClassNo} | ${studentName} |`);
+        });
+        console.log("--------------------------------");
+    }
+    console.log("+--------+---------------------+");
+}
