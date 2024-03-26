@@ -3,7 +3,7 @@ import studentList from './studentData.js';
 let condition = true
 while(condition){
 
-    const userInput = readline.question("Enter the number \n 1) TakeTest \n 2) GenerateResult \n 3) StudentResult \n 4) ClassBasedResult \n 5) DetailAnalysisResult \n 6) topThreePerformer \n 7) Exit \n  \n");
+    const userInput = readline.question("\nPlease Select Any Of The Given Options \n 1) TakeTest \n 2) GenerateResult \n 3) StudentResult \n 4) ClassBasedResult \n 5) DetailAnalysisResult \n 6) topThreePerformer \n 7) Exit \n  \n");
 
     if(userInput == 1){
         takeTest()
@@ -60,12 +60,13 @@ function takeTest(){
              student.test_score.push( ...studentObjects)
             }
         })
-        
+        console.log("the test has been taken successfully");
         }
 
 
 
 function generateResult() {
+    let testRequired = false
     studentList.forEach(student => {
         let totalScore = 0;
         let totalSubjects = student.test_score.length;
@@ -78,34 +79,76 @@ function generateResult() {
             let percentage = parseFloat(((totalScore / totalSubjects).toFixed(2))) 
             student.totalScore = totalScore;
             student.percentage = percentage;
-        } else {
-            student.totalScore = 0;
-            student.percentage = 0;
-        }
-    });
+
+            } else {
+                testRequired = true
+            }
+
+        });
+
+            if(testRequired){
+                console.log("please take the test first \n");
+                return
+            }
+   
+    console.log("the result generated successfully \n");
 }
 
 
 
 function studentResult()
 {
-console.log("+--------+---------------------+");
-console.log("| TotalScore  |  Percentage    |");
-console.log("+--------+---------------------+")
-    studentList.forEach(student => {
-        if(student.totalScore != 0 && student.percentage != 0)
-        {
-            const totalScore = student.totalScore.toString().padStart(6);
-            const percentage = student.percentage.toString().padEnd(5);
-            console.log(`| ${totalScore}      | ${percentage}         |`);
-            console.log("+--------+---------------------+")
+    for(let i = 0 ; i<studentList.length ; i++){
 
-        }})
+        if(studentList[i].test_score.length == 0){
+            console.log("please take the test and generate result  \n ");
+            return
+        }
+
+       else if(studentList[i].totalScore == undefined && studentList[i].totalScore == null){
+            console.log("please generate result and come back \n ");
+            return
+        }
+    }
+    console.log("+--------+----------------------+-------+--------+------------+----------------+");
+    console.log("| RollNO |        Name          | Class | Gender | TotalScore | Percentage     |");
+    console.log("+--------+----------------------+-------+--------+------------+----------------+");
+
+    studentList.forEach(studentResult => {
+        
+            const rollNo = studentResult.Roll_no.toString().padStart(6);
+            const name = studentResult.Name.padEnd(20);
+            const studentClass = studentResult.Class.toString().padEnd(5);
+            const gender = studentResult.Gender.padEnd(6);
+            const totalScore = studentResult.totalScore.toString().padStart(10);
+            const percentage = studentResult.percentage.toString().padStart(11) + "%";
+            
+            console.log(`| ${rollNo} | ${name} | ${studentClass} | ${gender} | ${totalScore} | ${percentage}   |`);
+      
+        
+            console.log("+--------+----------------------+-------+--------+------------+----------------+ ");
+        })
 
         }
 
 
 function viewClassResult(){
+
+    for(let i = 0 ; i<studentList.length ; i++){
+
+        
+        if(studentList[i].test_score.length == 0){
+            console.log("please take the test and generate result  \n ");
+            return
+        }
+
+       else if(studentList[i].totalScore == undefined && studentList[i].totalScore == null){
+            generateResult = takeTest
+            console.log("please generate result and come back");
+            return
+        }
+    }
+
    let classResults = {}
     studentList.forEach(student => {
         if(!classResults[student.Class]){
@@ -133,14 +176,31 @@ function viewClassResult(){
             console.log(`| ${rollNo} | ${name} | ${studentClass} | ${gender} | ${totalScore} | ${percentage}   |`);
       
         
-            console.log("+--------+----------------------+-------+--------+------------+----------------+");
+            console.log("+--------+----------------------+-------+--------+------------+----------------+\n ");
         })
                 
     }
+    console.log("the studentResult generated successfully");
 }
 
 
 function DetailAnalysisResult() {
+
+    for(let i = 0 ; i<studentList.length ; i++){
+
+        
+        if(studentList[i].test_score.length == 0){
+            console.log("please take the test and generate result  \n ");
+            return
+        }
+
+       else if(studentList[i].totalScore == undefined && studentList[i].totalScore == null){
+            generateResult = takeTest
+            console.log("please generate result and come back");
+            return
+        }
+    }
+
     let overAllResult = {};
     studentList.forEach(student => {
         if (!overAllResult[student.Class]) {
@@ -173,8 +233,8 @@ function DetailAnalysisResult() {
         console.log(studentCount);
         let averageTotalMark = (totalMarks / studentCount).toFixed(2);
         let averageTotalPercentage = (totalPercentage / studentCount).toFixed(2);
-        let failedStudentPercentage = failedStudentCount > 0 ? ((failedStudentCount/studentCount)*100 ).toFixed(2) : "0.00";
-        let passedStudentPercentage = passedStudentCount > 0 ? (( passedStudentCount/studentCount)*100 ).toFixed(2) : "0.00";
+        let failedStudentPercentage = failedStudentCount > 0 ? ((failedStudentCount/studentCount)*100 ).toFixed(2) : 0;
+        let passedStudentPercentage = passedStudentCount > 0 ? (( passedStudentCount/studentCount)*100 ).toFixed(2) : 0;
         let overallGradeClass = '';
 
         if (averageTotalPercentage > 80) {
@@ -186,16 +246,36 @@ function DetailAnalysisResult() {
         } else {
             overallGradeClass = 'D';
         }
+        console.log(typeof averageTotalMark );
+        console.log(typeof failedStudentPercentage);
 
         console.log("+-----------+-------+-------+-------+--------------+-------------------+-------------+------------------+");
         console.log("| Avg Mark  | Avg % | Class | Grade | Failed Count | Failed Percentage | Passed Count | Passed Percentage |");
         console.log("+-----------+-------+-------+-------+--------------+-------------------+-------------+------------------+");
-        console.log(`| ${averageTotalMark.padStart(9)} | ${averageTotalPercentage.padStart(5)} | ${cls.padStart(5)} | ${overallGradeClass.padStart(5)} | ${failedStudentCount.toString().padStart(12)} | ${failedStudentPercentage.padStart(17)}% | ${passedStudentCount.toString().padStart(11)} | ${passedStudentPercentage.padStart(16)}% |`);
+        console.log(`| ${averageTotalMark.padStart(9)} | ${averageTotalPercentage.padStart(5)} | ${cls.padStart(5)} | ${overallGradeClass.padStart(5)} | ${failedStudentCount.toString().padStart(6)} | ${failedStudentPercentage.toString().padStart(6)}% | ${passedStudentCount.toString().padStart(11)} | ${passedStudentPercentage.padStart(16)}% |`);
         console.log("+-----------+-------+-------+-------+--------------+-------------------+-------------+------------------+");
     });
 }
 
+
+
 function viewTopPerformers() {
+
+    for(let i = 0 ; i<studentList.length ; i++){
+
+        
+        if(studentList[i].test_score.length == 0){
+            console.log("please take the test and generate result  \n ");
+            return
+        }
+
+       else if(studentList[i].totalScore == undefined && studentList[i].totalScore == null){
+            generateResult = takeTest
+            console.log("please generate result and come back");
+            return
+        }
+    }
+
     let topPerformers = {};
     
     studentList.forEach(student => {
@@ -212,18 +292,19 @@ function viewTopPerformers() {
     }
 
 
-    console.log("+--------+---------------------+");
-    console.log("| Class  |  Student Name       |");
-    console.log("+--------+---------------------+");
+    console.log("+--------+---------------------+-----------+");
+    console.log("| Class  |  Student Name       |  Percentage");
+    console.log("+--------+---------------------+-----------+");
 
 
     for (let cls in topPerformers) {
         topPerformers[cls].forEach(student => {
             const ClassNo = cls.toString().padStart(6);
-            const studentName = student.Name.padEnd(20);
-            console.log(`| ${ClassNo} | ${studentName} |`);
+            const studentName = student.Name.padEnd(15);
+            const studentPercentage = student.percentage.toString().padStart(7)
+            console.log(`| ${ClassNo} | ${studentName} | ${studentPercentage}       |`);
         });
-        console.log("--------------------------------");
+        console.log("--------------------------------------------");
     }
-    console.log("+--------+---------------------+");
+    console.log("+--------+---------------------+-----------+");
 }
